@@ -5,6 +5,7 @@
  */
 
 #include "m_pd.h"
+#include <math.h>
 
 static t_class *bitcrush_tilde_class;
 
@@ -40,7 +41,14 @@ t_int *bitcrush_tilde_perform(t_int *w)
     t_sample    *out =      (t_sample *)(w[3]);
     int            n =             (int)(w[4]);
 
-    while (n--) *out++ = (*in1++);
+    while (n--) {
+        t_sample output;
+		    t_sample in = *(in1++);
+        output = trunc(in / 0.333) * 0.333;
+        t_sample bitdepth = x->bd;
+
+        *out++ = output;
+    }
 
     return (w+5);
 }

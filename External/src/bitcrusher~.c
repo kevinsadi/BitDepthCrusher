@@ -34,7 +34,7 @@ typedef struct _bitcrush_tilde {
  * are reserved for every operation, and then return a pointer to the same array, except incremented
  * by the amount of elements we used in this routine.
  */
-t_int *bitcrush_tilde_perform(t_int *w)
+static t_int *bitcrush_tilde_perform(t_int *w)
 {
     t_bitcrush_tilde *x = (t_bitcrush_tilde *)(w[1]);
     t_sample    *in1 =      (t_sample *)(w[2]);
@@ -43,9 +43,8 @@ t_int *bitcrush_tilde_perform(t_int *w)
 
     while (n--) {
         t_sample output;
-		    t_sample in = *(in1++);
+		t_sample in = *(in1++);
         output = trunc(in / 0.333) * 0.333;
-        t_sample bitdepth = x->bd;
 
         *out++ = output;
     }
@@ -53,13 +52,13 @@ t_int *bitcrush_tilde_perform(t_int *w)
     return (w+5);
 }
 
-void bitcrush_tilde_dsp(t_bitcrush_tilde *x, t_signal **sp)
+static void bitcrush_tilde_dsp(t_bitcrush_tilde *x, t_signal **sp)
 {
   dsp_add(bitcrush_tilde_perform, 4, x,
           sp[0]->s_vec, sp[1]->s_vec, sp[0]->s_n);
 }
 
-void bitcrush_tilde_free(t_bitcrush_tilde *x)
+static void bitcrush_tilde_free(t_bitcrush_tilde *x)
 {
   inlet_free(x->x_in2);
   outlet_free(x->x_out);
@@ -71,7 +70,7 @@ void bitcrush_tilde_free(t_bitcrush_tilde *x)
  * the name of this function is arbitrary and is registered to Pd in the
  * bitcrush_tilde_setup() routine
  */
-void *bitcrush_tilde_new(t_floatarg f)
+static void *bitcrush_tilde_new(t_floatarg f)
 {
     t_bitcrush_tilde *x = (t_bitcrush_tilde *)pd_new(bitcrush_tilde_class);
 
@@ -107,4 +106,6 @@ void bitcrush_tilde_setup(void) {
                   gensym("dsp"),
                   A_CANT, 0);
     CLASS_MAINSIGNALIN(bitcrush_tilde_class, t_bitcrush_tilde, f); // specify first inlet to be a signal by default
+
+    class_sethelpsymbol(bitcrush_tilde_class, gensym("bitcrush~"));
 }
